@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mental Health Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f2ec;
+    --surface: #ffffff;
+    --surface-2: #f0ede6;
+    --border: rgba(60,50,30,0.12);
+    --border-strong: rgba(60,50,30,0.22);
+    --text: #1c1a14;
+    --text-muted: #7a7060;
+    --accent: #2e6b52;
+    --accent-light: #e4f0ea;
+    --accent-dark: #1d4d3a;
+    --amber: #c47d1a;
+    --amber-light: #fdf3e3;
+    --red: #b83535;
+    --red-light: #fceaea;
+    --green: #2e6b52;
+    --green-light: #e4f0ea;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── BACKGROUND PATTERN ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(46,107,82,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(196,125,26,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 5rem;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HOME ── */
+  .home-hero {
+    text-align: center;
+    padding: 4rem 1rem 3rem;
+  }
+  .home-emblem {
+    width: 72px; height: 72px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.75rem;
+    border: 1.5px solid rgba(46,107,82,0.2);
+  }
+  .home-emblem svg { width: 30px; height: 30px; stroke: var(--accent); }
+  .home-hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .home-hero h1 em { font-style: italic; color: var(--accent); }
+  .home-hero p {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.75;
+  }
+  .info-pills {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+  .pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 5px 14px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px 32px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s ease;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0) scale(0.98); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid rgba(46,107,82,0.3);
+  }
+  .btn-ghost:hover { background: var(--accent-light); }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-meta {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── SECTION HEADING ── */
+  .section-label {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .tag-green  { background: var(--accent-light); color: var(--accent-dark); }
+  .tag-amber  { background: var(--amber-light);  color: var(--amber); }
+  .tag-blue   { background: #e8f0fe; color: #1a5bbf; }
+  .section-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-section { margin-bottom: 2.25rem; }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.375rem;
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+  }
+  .q-card:hover { border-color: var(--border-strong); }
+  .q-num { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
+  .q-text { font-size: 14.5px; color: var(--text); margin-bottom: 1rem; line-height: 1.6; }
+
+  /* radio chips */
+  .radio-group { display: flex; gap: 7px; flex-wrap: wrap; }
+  .radio-group label { cursor: pointer; }
+  .radio-group input[type="radio"] { display: none; }
+  .chip {
+    display: inline-block;
+    padding: 5px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--bg);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .radio-group input:checked + .chip {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent-dark);
+    font-weight: 500;
+  }
+
+  /* dual selects */
+  .dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-label { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+  select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    background: var(--bg);
+    color: var(--text);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7060' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    cursor: pointer;
+  }
+  select:focus { outline: 2px solid rgba(46,107,82,0.35); border-color: var(--accent); }
+
+  /* ── SUBMIT AREA ── */
+  .submit-area { text-align: center; padding-top: 0.5rem; }
+  .error-alert {
+    background: var(--red-light);
+    border: 1px solid rgba(184,53,53,0.2);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem 1rem;
+    font-size: 13.5px;
+    color: var(--red);
+    margin-top: 1rem;
+    display: none;
+  }
+
+  /* ── LOADING ── */
+  .loading-view {
+    text-align: center;
+    padding: 5rem 1rem;
+  }
+  .loader {
+    width: 38px; height: 38px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin: 0 auto 1.25rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-view p { color: var(--text-muted); font-size: 14px; }
+
+  /* ── RESULTS ── */
+  .result-intro { text-align: center; margin-bottom: 2rem; }
+  .result-intro h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+  .result-intro p { font-size: 14px; color: var(--text-muted); }
+
+  .risk-card {
+    border-radius: var(--radius);
+    padding: 1.375rem 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid transparent;
+  }
+  .risk-high     { background: var(--red-light);   border-color: rgba(184,53,53,0.18); }
+  .risk-moderate { background: var(--amber-light);  border-color: rgba(196,125,26,0.18); }
+  .risk-low      { background: var(--green-light);  border-color: rgba(46,107,82,0.18); }
+
+  .risk-icon {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .risk-high     .risk-icon { background: rgba(184,53,53,0.12); }
+  .risk-moderate .risk-icon { background: rgba(196,125,26,0.12); }
+  .risk-low      .risk-icon { background: rgba(46,107,82,0.12); }
+
+  .risk-icon svg { width: 20px; height: 20px; }
+  .risk-high .risk-icon svg     { stroke: var(--red); }
+  .risk-moderate .risk-icon svg { stroke: var(--amber); }
+  .risk-low .risk-icon svg      { stroke: var(--green); }
+
+  .risk-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+  .risk-value { font-family: 'DM Serif Display', serif; font-size: 1.3rem; font-weight: 400; }
+  .risk-high .risk-value     { color: var(--red); }
+  .risk-moderate .risk-value { color: var(--amber); }
+  .risk-low .risk-value      { color: var(--green); }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .res-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.125rem 1.25rem;
+  }
+  .res-item.full { grid-column: 1 / -1; }
+  .res-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 5px; }
+  .res-value { font-size: 15px; font-weight: 500; color: var(--text); }
+
+  .result-actions { text-align: center; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .home-hero h1 { font-size: 1.9rem; }
+    .dual-grid { grid-template-columns: 1fr; }
+    .result-grid { grid-template-columns: 1fr; }
+    .res-item.full { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <div class="home-hero">
+      <div class="home-emblem">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402C1 3.738 4.068 2 6.5 2 8.815 2 10.862 3.369 12 5.37 13.137 3.369 15.185 2 17.5 2 19.932 2 23 3.738 23 7.191c0 4.105-5.37 8.863-11 14.402z"/>
+        </svg>
+      </div>
+      <h1>Your <em>mental health</em><br/>matters</h1>
+      <p>A confidential assessment to understand your emotional wellbeing and connect you with the right support and resources.</p>
+      <div class="info-pills">
+        <span class="pill"><span class="pill-dot"></span>15 questions</span>
+        <span class="pill"><span class="pill-dot"></span>~5 minutes</span>
+        <span class="pill"><span class="pill-dot"></span>Confidential</span>
+      </div>
+      <button class="btn btn-primary" onclick="startAssessment()">
+        Begin assessment
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- QUESTIONNAIRE -->
+  <div id="screen-q" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">0 of 15 answered</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="prog-bar"></div>
+      </div>
+    </div>
+
+    <!-- Section 1: Emotional Neglect -->
+    <div class="q-section">
+      <div class="section-label">
+        <span class="section-tag tag-green">Section 1</span>
+        <span class="section-name">Emotional Neglect</span>
+      </div>
+      <div id="en-questions"></div>
+    </div>
+
+    <!-- Section 2: Interpersonal Anxiety -->
+    <div class="q-section">
+      <div class="section-label">
+        <span class="section-tag tag-amber">Section 2</span>
+        <span class="section-name">Interpersonal Anxiety</span>
+      </div>
+      <div id="ia-questions"></div>
+    </div>
+
+    <!-- Section 3: Psychological Capital -->
+    <div class="q-section">
+      <div class="section-label">
+        <span class="section-tag tag-blue">Section 3</span>
+        <span class="section-name">Psychological Capital</span>
+      </div>
+      <div id="psy-questions"></div>
+    </div>
+
+    <div class="submit-area">
+      <button class="btn btn-primary" id="btn-submit" onclick="submitForm()">Analyze my responses</button>
+      <div class="error-alert" id="error-alert">Please answer all questions before submitting.</div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-view">
+      <div class="loader"></div>
+      <p>Analyzing your responses&hellip;</p>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="screen-results" class="screen">
+    <div class="result-intro">
+      <h2>Your results</h2>
+      <p>Based on your responses, here is a personalized summary.</p>
+    </div>
+    <div id="result-body"></div>
+    <div class="result-actions">
+      <button class="btn btn-ghost" onclick="restart()">Take again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const EN_Q = [
+    "I felt emotionally supported by those around me.",
+    "I had people to talk to when I was feeling down.",
+    "I felt understood by the people close to me.",
+    "My emotional needs were met during difficult times.",
+    "I received the emotional care I needed."
+  ];
+  const IA_Q = [
+    "In social situations I feel comfortable with others.",
+    "I find it easy to get emotionally close to others.",
+    "I prefer not to depend on others.",
+    "I worry that others do not value me.",
+    "I feel comfortable sharing my feelings with others."
+  ];
+  const PSY_Q = [
+    "I feel confident taking on challenges in my life.",
+    "I stay optimistic about what will happen to me in the future.",
+    "When things go wrong, I recover quickly.",
+    "I can think of many ways to reach my goals.",
+    "I feel I can handle many things at once."
+  ];
+
+  const SCALE15 = [
+    { val: 1, label: "1 – Strongly disagree" },
+    { val: 2, label: "2 – Disagree" },
+    { val: 3, label: "3 – Neutral" },
+    { val: 4, label: "4 – Agree" },
+    { val: 5, label: "5 – Strongly agree" }
+  ];
+
+  function buildRadioQ(questions, prefix, container) {
+    let html = '';
+    questions.forEach((q, i) => {
+      html += `<div class="q-card">
+        <div class="q-num">Q${i + 1}</div>
+        <div class="q-text">${q}</div>
+        <div class="radio-group">`;
+      SCALE15.forEach(s => {
+        html += `<label>
+          <input type="radio" name="${prefix}_${i}" value="${s.val}" onchange="updateProgress()">
+          <span class="chip">${s.label}</span>
+        </label>`;
+      });
+      html += `</div></div>`;
+    });
+    document.getElementById(container).innerHTML = html;
+  }
+
+  function buildDualQ(questions, container) {
+    let html = '';
+    questions.forEach((q, i) => {
+      html += `<div class="q-card">
+        <div class="q-num">Q${i + 1}</div>
+        <div class="q-text">${q}</div>
+        <div class="dual-grid">
+          <div>
+            <div class="field-label">Anxiety level (0–3)</div>
+            <select name="ia_an_${i}" onchange="updateProgress()">
+              <option value="">Select...</option>
+              <option value="0">0 – None</option>
+              <option value="1">1 – Mild</option>
+              <option value="2">2 – Moderate</option>
+              <option value="3">3 – High</option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label">Avoidance level (0–3)</div>
+            <select name="ia_av_${i}" onchange="updateProgress()">
+              <option value="">Select...</option>
+              <option value="0">0 – None</option>
+              <option value="1">1 – Mild</option>
+              <option value="2">2 – Moderate</option>
+              <option value="3">3 – High</option>
+            </select>
+          </div>
+        </div>
+      </div>`;
+    });
+    document.getElementById(container).innerHTML = html;
+  }
+
+  function countAnswered() {
+    let total = 0, done = 0;
+    EN_Q.forEach((_, i) => { total++; if (document.querySelector(`input[name="en_${i}"]:checked`)) done++; });
+    IA_Q.forEach((_, i) => {
+      total += 2;
+      const an = document.querySelector(`select[name="ia_an_${i}"]`);
+      const av = document.querySelector(`select[name="ia_av_${i}"]`);
+      if (an && an.value) done++;
+      if (av && av.value) done++;
+    });
+    PSY_Q.forEach((_, i) => { total++; if (document.querySelector(`input[name="psy_${i}"]:checked`)) done++; });
+    return { total, done };
+  }
+
+  function updateProgress() {
+    const { total, done } = countAnswered();
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent = pct + '%';
+    document.getElementById('prog-label').textContent = `${done} of ${total} answered`;
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function startAssessment() {
+    buildRadioQ(EN_Q, 'en', 'en-questions');
+    buildDualQ(IA_Q, 'ia-questions');
+    buildRadioQ(PSY_Q, 'psy', 'psy-questions');
+    showScreen('screen-q');
+    updateProgress();
+  }
+
+  async function submitForm() {
+    const alert = document.getElementById('error-alert');
+    alert.style.display = 'none';
+
+    let en = [], ia_an = [], ia_av = [], psy = [], valid = true;
+
+    EN_Q.forEach((_, i) => {
+      const el = document.querySelector(`input[name="en_${i}"]:checked`);
+      if (el) en.push(parseInt(el.value)); else valid = false;
+    });
+    IA_Q.forEach((_, i) => {
+      const an = document.querySelector(`select[name="ia_an_${i}"]`);
+      const av = document.querySelector(`select[name="ia_av_${i}"]`);
+      if (an && an.value) ia_an.push(parseInt(an.value)); else valid = false;
+      if (av && av.value) ia_av.push(parseInt(av.value)); else valid = false;
+    });
+    PSY_Q.forEach((_, i) => {
+      const el = document.querySelector(`input[name="psy_${i}"]:checked`);
+      if (el) psy.push(parseInt(el.value)); else valid = false;
+    });
+
+    if (!valid) {
+      alert.style.display = 'block';
+      alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    showScreen('screen-loading');
+
+    try {
+      const res = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ en, ia_an, ia_av, psy })
+      });
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+      const data = await res.json();
+      renderResults(data);
+      showScreen('screen-results');
+    } catch (err) {
+      showScreen('screen-q');
+      const alertEl = document.getElementById('error-alert');
+      alertEl.innerHTML = `Could not reach the backend at <code>http://127.0.0.1:5000/predict</code>. Make sure your Flask server is running.<br/><small style="opacity:0.7;margin-top:4px;display:block">${err.message}</small>`;
+      alertEl.style.display = 'block';
+      alertEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function renderResults(data) {
+    const risk = (data.risk || '').toLowerCase();
+    let rClass = 'risk-low';
+    let iconPath = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`;
+    if (risk.includes('high'))    { rClass = 'risk-high';     iconPath = `<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>`; }
+    else if (risk.includes('mod')) { rClass = 'risk-moderate'; iconPath = `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`; }
+
+    const group = data.cluster !== undefined ? `Group ${data.cluster}` : '—';
+
+    document.getElementById('result-body').innerHTML = `
+      <div class="risk-card ${rClass}">
+        <div class="risk-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>
+        </div>
+        <div>
+          <div class="risk-label">Risk level</div>
+          <div class="risk-value">${data.risk || '—'}</div>
+        </div>
+      </div>
+      <div class="result-grid">
+        <div class="res-item">
+          <div class="res-label">Therapy plan</div>
+          <div class="res-value">${data.therapy || '—'}</div>
+        </div>
+        <div class="res-item">
+          <div class="res-label">Therapist</div>
+          <div class="res-value">${data.therapist || '—'}</div>
+        </div>
+        <div class="res-item full">
+          <div class="res-label">Group assignment</div>
+          <div class="res-value">${group}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function restart() {
+    showScreen('screen-home');
+  }
+</script>
+</body>
+</html>

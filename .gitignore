@@ -1,0 +1,52 @@
+# 🔹 Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🔹 Virtual environment
+venv/
+env/
+ENV/
+
+# 🔹 Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# 🔹 System files
+.DS_Store
+Thumbs.db
+
+# 🔹 Logs
+*.log
+
+# 🔹 Environment variables (important)
+.env
+
+# 🔹 Temporary files
+*.tmp
+*.swp
+
+# 🔹 VS Code / IDE
+.vscode/
+.idea/
+
+# 🔹 OS generated
+desktop.ini
+
+# 🔹 Python build files
+build/
+dist/
+*.egg-info/
+
+# 🔹 Node modules (if frontend grows later)
+node_modules/
+
+# 🔹 Ignore large datasets (optional)
+data/*.csv
+data/*.xlsx
+
+# 🔹 Model files (OPTIONAL - choose one)
+# If models are large, ignore:
+# backend/models/*.pkl
+
+# OR if you want to show working project, KEEP them (recommended for you now)

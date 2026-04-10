@@ -1,4 +1,4 @@
-async function submitForm() {
+async function submitForm(event) {
 
     let en = [
         parseInt(document.getElementById("en1").value)
