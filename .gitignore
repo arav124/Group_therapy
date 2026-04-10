@@ -41,9 +41,7 @@ dist/
 # 🔹 Node modules (if frontend grows later)
 node_modules/
 
-# 🔹 Ignore large datasets (optional)
-data/*.csv
-data/*.xlsx
+
 
 # 🔹 Model files (OPTIONAL - choose one)
 # If models are large, ignore:
