@@ -207,7 +207,7 @@ Frontend Result Display
 
 ## 📌 Authors
 
-* **Aravind Murugesan** – Machine Learning, Backend Development, System Design
+* **Aravind Murugesan** – Machine Learning, Backend Development
 * **Sakthi** – Frontend Development (UI/UX Design)
 
 ---
